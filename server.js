@@ -54,12 +54,10 @@ io.on('connection', (socket) => {
       socket.emit('entrySuccess', nick);
       // io.emit('updateNicks', nickStore)
     }
-    // if (nickStore[socket.id]?.nick) {
-    //   console.log('ddddd');
-    //   socket.emit('nickDup', '사용할 수 없는 닉네임');
-    // }
-
-    // 중복 아닐때
+  });
+  socket.on('disconnect', () => {
+    io.emit('notice', `${nickStore[socket.id]} 님이 퇴장함`);
+    delete nickStore[socket.id];
   });
 });
 

@@ -46,7 +46,7 @@
       .chat-input {
         position: absolute;
         bottom: 0;
-        width: calc(100% - 20px); /* Adjusted width to consider padding */
+        width: calc(100% - 20px);
         padding: 10px;
         background-color: #ecf0f1;
         display: flex;
@@ -74,11 +74,16 @@
         margin-bottom: 10px;
         padding: 8px;
         border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .my-chat span {
+        background-color: inherit; /* 배경색 삭제 */
+        color: inherit; /* 텍스트 색상 삭제 */
       }
 
       .my-chat {
-        background-color: #3498db;
-        color: #fff;
         text-align: right;
       }
 
@@ -86,26 +91,54 @@
         background-color: #ecf0f1;
         color: #333;
       }
+
+      .entry-box {
+        display: flex;
+        margin-bottom: 10px;
+      }
+
+      .entry-box input {
+        flex: 1;
+        margin-right: 10px;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      .entry-box button {
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        padding: 8px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .notice {
+        text-align: center;
+        color: #888;
+      }
     </style>
   </head>
   <body>
     <h1>My Chat</h1>
 
-    <!-- 실습 1 -->
-    <!-- <button onclick="sayHello()">Hello</button>
-    <button onclick="sayStudy()">Study</button>
-    <button onclick="sayBye()">Bye</button>
-    <p id="form-server"></p> -->
+    <!-- 닉네임 입력 폼 -->
+    <div class="entry-box">
+      <input type="text" id="nickname" placeholder="닉네임" autofocus onkeypress="if(window.event.keyCode==13){join()}" />
+      <button type="button" onclick="join();">입장</button>
+    </div>
 
-    <!-- 실습 2 -->
     <main class="chat-box">
       <div class="chat-list">
-        <div class="my-chat">
-          <div>user1: msg1</div>
-        </div>
-        <div class="other-chat">
-          <div>user2: msg2</div>
-        </div>
+        <!-- <div class="my-chat">
+                <div>작성자: user1</div>
+                <div>내용: msg1</div>
+            </div>
+            <div class="other-chat">
+                <div>작성자: user2</div>
+                <div>내용: msg2</div>
+            </div> -->
       </div>
       <div class="chat-input">
         <input type="text" id="chat-message" placeholder="채팅 입력..." />
@@ -115,17 +148,41 @@
 
     <script>
       let socket = io.connect(); // 소켓 사용을 위한 객체 생성
+
       socket.on('connect', () => {
         console.log('클라이언트.. 소켓 연결 완료. 소켓 객체 ID >> ', socket.id);
+
+        socket.on('notice', (msg) => {
+          document.querySelector('.chat-list').insertAdjacentHTML('beforeend', `<div class="notice">${msg}</div>`);
+        });
+
+        socket.on('nickDup', (msg) => {
+          alert(msg);
+        });
+
+        socket.on('chatMessage', (data) => {
+          const chatList = document.querySelector('.chat-list');
+          const chatContent = `<div class="my-chat">
+                                        <div>작성자: <span>${data.nick}</span></div>
+                                        <div>내용: ${data.message}</div>
+                                    </div>`;
+          chatList.insertAdjacentHTML('beforeend', chatContent);
+        });
       });
 
-      // 실습1
-      //   function sayHello() {
-      //     socket.emit('hello', { who: 'client', msg: 'hello' });
-      //     socket.on('helloKr', (data) => {
-      //       document.querySelector('#form-server').textContent = `${data.who} : ${data.msg}`;
-      //     });
-      //   }
+      function join() {
+        socket.emit('setNick', document.querySelector('#nickname').value);
+      }
+
+      function submitChat() {
+        const messageInput = document.getElementById('chat-message');
+        const message = messageInput.value.trim();
+
+        if (message !== '') {
+          socket.emit('chatMessage', { message });
+          messageInput.value = '';
+        }
+      }
     </script>
   </body>
 </html>

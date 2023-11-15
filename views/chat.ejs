@@ -147,7 +147,7 @@
             </div> -->
       </div>
       <div class="chat-input">
-        <input type="text" id="chat-message" placeholder="채팅 입력..." />
+        <input type="text" id="chat-message" placeholder="채팅 입력..." onkeypress="handleKeyPress(event)" />
         <button id="submit-button" onclick="submitChat()">제출</button>
       </div>
     </main>
@@ -199,6 +199,12 @@
 
       function join() {
         socket.emit('setNick', document.querySelector('#nickname').value);
+      }
+
+      function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+          submitChat();
+        }
       }
 
       function submitChat() {

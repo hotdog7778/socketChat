@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.io 채팅</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+
+      .chat-box {
+        position: relative;
+        width: 80%;
+        max-width: 400px;
+        height: 80vh;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .chat-list {
+        flex: 1;
+        padding: 10px;
+        overflow-y: auto;
+        max-height: 60vh;
+      }
+
+      .chat-input {
+        position: absolute;
+        bottom: 0;
+        width: calc(100% - 20px); /* Adjusted width to consider padding */
+        padding: 10px;
+        background-color: #ecf0f1;
+        display: flex;
+      }
+
+      #chat-message {
+        flex: 1;
+        margin-right: 10px;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      #submit-button {
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        padding: 8px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .my-chat,
+      .other-chat {
+        margin-bottom: 10px;
+        padding: 8px;
+        border-radius: 5px;
+      }
+
+      .my-chat {
+        background-color: #3498db;
+        color: #fff;
+        text-align: right;
+      }
+
+      .other-chat {
+        background-color: #ecf0f1;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>My Chat</h1>
+
+    <!-- 실습 1 -->
+    <!-- <button onclick="sayHello()">Hello</button>
+    <button onclick="sayStudy()">Study</button>
+    <button onclick="sayBye()">Bye</button>
+    <p id="form-server"></p> -->
+
+    <!-- 실습 2 -->
+    <main class="chat-box">
+      <div class="chat-list">
+        <div class="my-chat">
+          <div>user1: msg1</div>
+        </div>
+        <div class="other-chat">
+          <div>user2: msg2</div>
+        </div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="chat-message" placeholder="채팅 입력..." />
+        <button id="submit-button" onclick="submitChat()">제출</button>
+      </div>
+    </main>
+
+    <script>
+      let socket = io.connect(); // 소켓 사용을 위한 객체 생성
+      socket.on('connect', () => {
+        console.log('클라이언트.. 소켓 연결 완료. 소켓 객체 ID >> ', socket.id);
+      });
+
+      // 실습1
+      //   function sayHello() {
+      //     socket.emit('hello', { who: 'client', msg: 'hello' });
+      //     socket.on('helloKr', (data) => {
+      //       document.querySelector('#form-server').textContent = `${data.who} : ${data.msg}`;
+      //     });
+      //   }
+    </script>
+  </body>
+</html>

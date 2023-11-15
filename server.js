@@ -31,7 +31,7 @@ io.on('connection', (socket) => {
 
     // io.emit('chatMessage', { message: data.message, sender: socket.id });
 
-    io.emit('chatMessage', { message: data.message, nick: nickName });
+    io.emit('chatMessage', { message: data.message, sender: nickName });
   });
 
   socket.on('setNick', (nick) => {
@@ -51,6 +51,8 @@ io.on('connection', (socket) => {
 
       // 이벤트 발생
       io.emit('notice', `${nick} 님이 입장했음`);
+      socket.emit('entrySuccess', nick);
+      // io.emit('updateNicks', nickStore)
     }
     // if (nickStore[socket.id]?.nick) {
     //   console.log('ddddd');

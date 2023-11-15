@@ -84,12 +84,14 @@
       }
 
       .my-chat {
-        text-align: right;
+        background-color: #9ed649;
+        text-align: left;
       }
 
       .other-chat {
         background-color: #ecf0f1;
         color: #333;
+        text-align: right;
       }
 
       .entry-box {
@@ -118,6 +120,10 @@
         text-align: center;
         color: #888;
       }
+
+      .d-none {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -129,7 +135,7 @@
       <button type="button" onclick="join();">입장</button>
     </div>
 
-    <main class="chat-box">
+    <main class="chat-box d-none">
       <div class="chat-list">
         <!-- <div class="my-chat">
                 <div>작성자: user1</div>
@@ -149,6 +155,8 @@
     <script>
       let socket = io.connect(); // 소켓 사용을 위한 객체 생성
 
+      let myNick;
+
       socket.on('connect', () => {
         console.log('클라이언트.. 소켓 연결 완료. 소켓 객체 ID >> ', socket.id);
 
@@ -162,11 +170,30 @@
 
         socket.on('chatMessage', (data) => {
           const chatList = document.querySelector('.chat-list');
-          const chatContent = `<div class="my-chat">
-                                        <div>작성자: <span>${data.nick}</span></div>
-                                        <div>내용: ${data.message}</div>
-                                    </div>`;
+
+          let chatContent = '';
+          if (data.sender === myNick) {
+            // 자기글이면
+            chatContent = `<div class="my-chat">
+                              <div>${data.message}</div>
+                          </div>`;
+          } else {
+            // 남의 글이면
+            chatContent = `<div class="other-chat">
+                              <div>작성자: ${data.sender}</div>
+                              <div>${data.message}</div>
+                          </div>`;
+          }
+
           chatList.insertAdjacentHTML('beforeend', chatContent);
+        });
+
+        socket.on('entrySuccess', (nick) => {
+          myNick = nick;
+
+          document.querySelector('#nickname').disabled = true;
+          document.querySelector('.entry-box > button').disabled = true;
+          document.querySelector('.chat-box').classList.remove('d-none');
         });
       });
 
